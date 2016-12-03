@@ -19,8 +19,18 @@ if (!$phone) {
     $result['errors'][] = 'Phone is required';
 }
 
-if (!$email || filter_var($email, FILTER_VALIDATE_EMAIL) === FALSE) {
+$email = filter_var($email, FILTER_VALIDATE_EMAIL);
+
+if ($email === FALSE) {
     $result['errors'][] = 'Valid email is required';
+} else {
+    // Check if email already exists
+    $sth = $conn->prepare("SELECT email FROM users WHERE email = '$email'");
+    $sth->execute();
+    $data = $sth->fetch(PDO::FETCH_ASSOC);
+    if (!empty($data)) {
+        $result['errors'][] = 'Email already exists.';
+    }
 }
 
 // Proceed if everything's alright
