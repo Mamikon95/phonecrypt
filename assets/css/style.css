@@ -1,0 +1,21 @@
+.container {
+    width: 600px;
+    margin: 0 auto;
+}
+
+.half {
+    width: 50%;
+    float: left;
+}
+
+.row {
+    margin-top: 1em;
+}
+
+fieldset {
+    padding: 0.5em;
+}
+
+fieldset legend {
+    color: blue;
+}
