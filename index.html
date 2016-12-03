@@ -8,7 +8,7 @@
 <body>
 <div class="container">
     <div class="half">
-        <form>
+        <form id="add" onsubmit="return false;">
             <fieldset>
                 <legend>Add your phone number</legend>
                 <p>
@@ -16,11 +16,11 @@
                 </p>
                 <div class="row">
                     <label for="phone-add">Enter your PHONE:</label>
-                    <input type="text" id="phone-add">
+                    <input type="text" id="phone-add" name="phone">
                 </div>
                 <div class="row">
                     <label for="email-add">Enter your E-mail:</label>
-                    <input type="email" id="email-add">
+                    <input type="email" id="email-add" name="email">
                 </div>
                 <div class="row">
                     <dl>
@@ -28,12 +28,13 @@
                             later on using your e-mail.</dd>
                     </dl>
                 </div>
+                <div class="status row"></div>
                 <button type="submit">Submit</button>
             </fieldset>
         </form>
     </div>
     <div class="half">
-        <form>
+        <form id="retrieve" onsubmit="return false;">
             <fieldset>
                 <legend>Retrieve your phone number</legend>
                 <p>
@@ -41,17 +42,24 @@
                 </p>
                 <div class="row">
                     <label for="email-retrieve">Enter your E-mail:</label>
-                    <input type="email" id="email-retrieve">
+                    <input type="email" id="email-retrieve" name="email">
                 </div>
                 <div class="row">
                     <dl>
                         <dd>The phone number will be e-mailed to you.</dd>
                     </dl>
                 </div>
+                <div class="status row"></div>
                 <button type="submit">Submit</button>
             </fieldset>
         </form>
     </div>
 </div>
+<!-- Scripts -->
+<script
+        src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+        crossorigin="anonymous"></script>
+<script type="text/javascript" src="assets/js/script.js"></script>
 </body>
 </html>
