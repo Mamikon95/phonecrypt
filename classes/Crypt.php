@@ -6,12 +6,12 @@ class Crypt {
 
     // Random key
     const KEY = 'duJGhaCruF3rPVrPp5mGvE9f94cUkA57';
-    // Ecnryption method
+    // Encryption method
     const METHOD = 'AES-128-CBC';
 
     /**
      * Encrypt data
-     * @param $input text to be encrypted
+     * @param string $input string to be encrypted
      * @return string
      */
     public function encrypt($input) {
@@ -23,8 +23,7 @@ class Crypt {
 
     /**
      * Decrypt data
-     * @param $input input string
-     * @param $key a key which was used for encrypting
+     * @param $input encoded string
      * @return string
      */
     public function decrypt($input) {
@@ -37,6 +36,7 @@ class Crypt {
 
     /**
      * Generate random key
+     * @param int $size key size
      * @return string
      */
     private function generate_key($size) {
@@ -44,7 +44,7 @@ class Crypt {
     }
 
     /**
-     * Get the IV size for openssl
+     * Get the IV size for chosen openssl method
      * @return int
      */
     private function get_iv_size() {
