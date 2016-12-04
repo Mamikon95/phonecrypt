@@ -1,11 +1,12 @@
 <?php
 /**
- * Retrieve phone from DB and decrypt it
+ * Retrieves user data by E-mail and sends it
  */
-require 'db.php';
+require 'classes/Database.php';
 require 'classes/Crypt.php';
 
 $crypt = new Crypt();
+$db = new Database();
 
 $result = [
     'success' => FALSE
@@ -18,18 +19,27 @@ if (!$email || filter_var($email, FILTER_VALIDATE_EMAIL) === FALSE) {
 } else {
     // Proceed if everything's alright
     $email =  filter_var($email, FILTER_VALIDATE_EMAIL);
-    $sth = $conn->prepare("SELECT phone, phone_key FROM users WHERE email = '$email' LIMIT 1");
-    $sth->execute();
-    $data = $sth->fetch(PDO::FETCH_ASSOC);
-    if (empty($data)) {
+
+    // Search through all Emails to find a matching one
+    $list = $db->getAllUsers();
+    $comparedEmail = $found = '';
+    foreach ($list as $item) {
+        $comparedEmail = $crypt->decrypt($item['email']);
+        if ($comparedEmail === $email) {
+            $found = $item;
+        }
+    }
+
+    if (empty($found)) {
         $result['errors'][] = "Email is not found, try a different one.";
     } else {
-        $phone = $crypt->decrypt($data['phone'], $data['phone_key']);
+        // Proceed if found
+        $phone = $crypt->decrypt($found['phone']);
         $result['success'] = TRUE;
         // Compose email
         $to      = $email;
         $subject = 'Your PHONE';
-        $message = "<p><strong>Your PHONE is:</strong><br>$phone</p>";
+        $message = "Your PHONE is: $phone";
         $headers = 'From: noreply@nomail.com' . "\r\n" .
                    'X-Mailer: PHP/' . phpversion();
         // Send it!

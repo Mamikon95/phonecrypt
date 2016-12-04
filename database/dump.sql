@@ -6,7 +6,6 @@ SET time_zone = '+00:00';
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `phone` varchar(255) NOT NULL,
-  `phone_key` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

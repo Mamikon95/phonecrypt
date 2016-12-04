@@ -1,11 +1,12 @@
 <?php
 /**
- * Encrypt and add phone to DB
+ * Encrypt and add user data to DB
  */
-require 'db.php';
+require 'classes/Database.php';
 require 'classes/Crypt.php';
 
 $crypt = new Crypt();
+$db = new Database();
 
 $result = [
     'success' => FALSE
@@ -25,11 +26,13 @@ if ($email === FALSE) {
     $result['errors'][] = 'Valid email is required';
 } else {
     // Check if email already exists
-    $sth = $conn->prepare("SELECT email FROM users WHERE email = '$email'");
-    $sth->execute();
-    $data = $sth->fetch(PDO::FETCH_ASSOC);
-    if (!empty($data)) {
-        $result['errors'][] = 'Email already exists.';
+    $list = $db->getAllUsers();
+    $comparedEmail = $found = '';
+    foreach ($list as $item) {
+        $comparedEmail = $crypt->decrypt($item['email']);
+        if ($comparedEmail === $email) {
+            $result['errors'][] = 'Email already exists, try another one.';
+        }
     }
 }
 
@@ -38,8 +41,11 @@ if (empty($result['errors'])) {
     $result['success'] = TRUE;
     $email = filter_var($email, FILTER_VALIDATE_EMAIL);
     $phone = trim(strip_tags($phone));
-    list($phone, $key) = $crypt->encrypt($phone);
-    $conn->exec("INSERT INTO users (phone, phone_key, email) VALUES ('$phone', '$key', '$email')");
+    // Encrypt both Email & Phone
+    $emailCrypt = $crypt->encrypt($email);
+    $phoneCrypt = $crypt->encrypt($phone);
+    // And save 'em
+    $db->insertUserData($phoneCrypt, $emailCrypt, $vector);
 }
 
 header('Content-Type: application/json');

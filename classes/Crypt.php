@@ -4,17 +4,21 @@
  */
 class Crypt {
 
+    // Random key
+    const KEY = 'duJGhaCruF3rPVrPp5mGvE9f94cUkA57';
+    // Ecnryption method
+    const METHOD = 'AES-128-CBC';
+
     /**
      * Encrypt data
      * @param $input text to be encrypted
-     * @return array
+     * @return string
      */
     public function encrypt($input) {
-        $key = $this->generate_key();
-        $iv = mcrypt_create_iv($this->get_iv_size(), MCRYPT_RAND);
-        $cipher = $iv . mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $key, $input, MCRYPT_MODE_CBC, $iv);
-        $output = base64_encode($cipher);
-        return [ $output, $key ];
+        $iv_size = $this->get_iv_size();
+        $iv = $this->generate_key($iv_size);
+        $cipher = openssl_encrypt($input, self::METHOD, self::KEY, false, $iv);
+        return base64_encode($iv . $cipher);
     }
 
     /**
@@ -23,27 +27,27 @@ class Crypt {
      * @param $key a key which was used for encrypting
      * @return string
      */
-    public function decrypt($input, $key) {
-        $cipher = base64_decode($input);
+    public function decrypt($input) {
+        $input = base64_decode($input);
         $iv_size = $this->get_iv_size();
-        $iv = substr($cipher, 0, $iv_size);
-        $cipher = substr($cipher, $iv_size);
-        return mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key, $cipher, MCRYPT_MODE_CBC, $iv);
-    }
-
-    /**
-     * Get the IV size for mcrypt
-     * @return int
-     */
-    private function get_iv_size() {
-        return mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
+        $iv = mb_substr($input, 0, $iv_size, '8bit');
+        $cipher = mb_substr($input, $iv_size, null, '8bit');
+        return openssl_decrypt($cipher, self::METHOD, self::KEY, false, $iv);
     }
 
     /**
      * Generate random key
      * @return string
      */
-    private function generate_key() {
-        return base64_encode(openssl_random_pseudo_bytes(16));
+    private function generate_key($size) {
+        return openssl_random_pseudo_bytes($size);
+    }
+
+    /**
+     * Get the IV size for openssl
+     * @return int
+     */
+    private function get_iv_size() {
+        return openssl_cipher_iv_length(self::METHOD);
     }
 }
